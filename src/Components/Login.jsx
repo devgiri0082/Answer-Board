@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-// import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import CssBaseline from '@material-ui/core/CssBaseline';
 // import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
@@ -8,21 +8,49 @@ import { IoPersonCircle } from "react-icons/io5";
 import { provider } from './Redux/firebaseConfig';
 import firebase from "firebase";
 import { useHistory } from 'react-router-dom';
+import styled from "styled-components";
 
-// const useStyles = makeStyles((theme) => {
-
-// })
+let GoogleButton = styled.div`
+    /* width: 150px; */
+    height: 30px;
+    border-radius: 5px;
+    align-items: center;
+    background: rgb(224,225,225);
+    display: flex;
+    padding: 0 7px;
+    justify-content: space-between;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    &:hover {
+        background: #babbbb;
+        transition: all 0.2s ease-in-out;
+    }
+    img {
+        height:27px;
+        width: 27px;
+        margin-right: 10px;
+    }
+`
+const useStyles = makeStyles((theme) => ({
+    addPadding: {
+        "padding-top": "100px",
+    }
+}))
 export default function Login() {
     let history = useHistory();
-    // let classes = useStyles();
+    let classes = useStyles();
     return (
         <Fragment>
             <CssBaseline>
-                <Grid container m={4} spacing={3} direction="column" alignItems="center" justify="center">
+                <Grid className={classes.addPadding} container m={4} spacing={4} direction="column" alignItems="center" justify="center">
                     <Typography variant="h3">Everyone answer</Typography>
-                    <Typography variant="h6">Welcome. Please sign in.</Typography>
-                    <Typography variant="h1"> <IoPersonCircle /></Typography>
-                    <button onClick={signIn}>Google sign in</button>
+                    <Typography variant="h6">Welcome, Please sign in.</Typography>
+                    <Typography variant="h1"> <IoPersonCircle style={{ color: "rgb(224,225,225)" }} /></Typography>
+                    <GoogleButton onClick={signIn}>
+                        <img src="https://www.transparentpng.com/thumb/google-logo/colorful-google-logo-transparent-clipart-download-u3DWLj.png" alt="colorful google logo" />
+                        <div className="text">Sign in with google</div>
+                    </GoogleButton>
                 </Grid>
             </CssBaseline>
         </Fragment>
@@ -32,6 +60,7 @@ export default function Login() {
             await firebase.auth()
                 .signInWithPopup(provider);
             console.log(firebase.auth().currentUser.email);
+            localStorage.setItem("currentUser", JSON.stringify(firebase.auth().currentUser))
             history.push("/students")
         } catch (err) {
             console.log(err);
