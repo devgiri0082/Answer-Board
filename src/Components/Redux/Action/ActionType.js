@@ -1,0 +1,3 @@
+const LOADING = "LOADING";
+const STUDENTS = "STUDENTS";
+export { LOADING, STUDENTS };

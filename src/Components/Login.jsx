@@ -40,6 +40,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Login() {
     let history = useHistory();
     let classes = useStyles();
+    if (JSON.parse(localStorage.getItem("currentUser"))) history.push("/students");
     return (
         <Fragment>
             <CssBaseline>

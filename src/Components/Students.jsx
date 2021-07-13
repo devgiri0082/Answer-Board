@@ -8,6 +8,7 @@ import { Avatar, Button } from '@material-ui/core';
 import { db } from './Redux/firebaseConfig';
 import firebase from "firebase";
 import { useHistory } from 'react-router-dom';
+import Logout from './Logout';
 const useStyles = makeStyles((theme) => ({
     addPadding: {
         padding: "70px 0"
@@ -23,9 +24,6 @@ const useStyles = makeStyles((theme) => ({
         "background": "rgb(62,81,180)",
         "width": "90px"
     },
-    picStyle: {
-        cursor: "pointer",
-    },
 }))
 export default function Students() {
     let currentUser = JSON.parse(localStorage.getItem("currentUser"));
@@ -39,9 +37,7 @@ export default function Students() {
         <Fragment>
             <Container maxWidth="md" p={4} className={classes.addPadding}>
                 <Grid container m={4} spacing={3} >
-                    <Grid item style={{ position: "absolute", right: "3%", top: "1.5%" }} onClick={signOut}>
-                        <Avatar alt={currentUser && currentUser.displayName} src={currentUser && currentUser.photoURL} className={classes.picStyle} />
-                    </Grid>
+                    <Logout />
                     <Grid item md={12}>
                         <Typography variant="h3">My Students</Typography>
                     </Grid>
@@ -62,16 +58,6 @@ export default function Students() {
             </Container>
         </Fragment>
     )
-    async function signOut() {
-        console.log("Hello");
-        try {
-            if (firebase.auth().currentUser) await firebase.auth().signOut();
-            localStorage.removeItem("currentUser");
-            history.push("/");
-        } catch (err) {
-            console.log(err);
-        }
-    }
     async function submitForm() {
         if (submitState === "submitting") return;
         let names = namesRef.current.value.split(/,|\n/).map((elem) => elem.trim());
