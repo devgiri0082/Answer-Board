@@ -14,7 +14,6 @@ let useStyles = makeStyles((themes) => ({
         "border": "2px solid rgb(63,81,181)",
         "border-radius": "5px",
         padding: "5px",
-        "pointer-events": "none",
         "resize": "none"
     }
 }))
