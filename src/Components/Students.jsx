@@ -9,6 +9,8 @@ import { db } from './Redux/firebaseConfig';
 import firebase from "firebase";
 import { useHistory } from 'react-router-dom';
 import Logout from './Logout';
+import { useDispatch } from 'react-redux';
+import { setStudents } from './Redux/Action/Actions';
 const useStyles = makeStyles((theme) => ({
     addPadding: {
         padding: "70px 0"
@@ -29,6 +31,7 @@ export default function Students() {
     let currentUser = JSON.parse(localStorage.getItem("currentUser"));
     console.log(firebase.auth().currentUser);
     let history = useHistory();
+    let dispatch = useDispatch();
     let namesRef = useRef();
     let [submitState, setSubmitState] = useState("notSubmitted");
     let classes = useStyles();
@@ -78,6 +81,7 @@ export default function Students() {
             await db.collection(firebase.auth().currentUser.email.split(".").join("_")).doc(firebase.auth().currentUser.email.split(".").join("_")).set({ students: names });
             setSubmitState("submitted");
             console.log("success");
+            dispatch(setStudents(names));
             history.push("/dashboard");
         } catch (err) {
             console.log(err);

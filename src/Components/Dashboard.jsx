@@ -22,10 +22,6 @@ export default function Dashboard() {
     let students = useSelector(state => state.students);
     let history = useHistory();
     let dispatch = useDispatch();
-    useEffect(() => {
-        currentUser && dispatch(getStudents(currentUser.email));
-        // eslint-disable-next-line
-    }, []);
     if (!currentUser) history.push("/");
     let classes = useStyles();
     return (
