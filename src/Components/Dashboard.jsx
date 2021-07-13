@@ -1,9 +1,8 @@
 import { Grid, makeStyles, TextareaAutosize, Typography } from '@material-ui/core'
-import React, { Fragment, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
+import React, { Fragment } from 'react'
+import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import Logout from './Logout'
-import { getStudents } from './Redux/Action/Actions';
 let useStyles = makeStyles((themes) => ({
     addPadding: {
         padding: "70px"
@@ -21,7 +20,6 @@ export default function Dashboard() {
     let currentUser = JSON.parse(localStorage.getItem("currentUser"));
     let students = useSelector(state => state.students);
     let history = useHistory();
-    let dispatch = useDispatch();
     if (!currentUser) history.push("/");
     let classes = useStyles();
     return (
