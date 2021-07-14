@@ -1,8 +1,9 @@
-import { Grid, makeStyles, TextareaAutosize, Typography } from '@material-ui/core'
-import React, { Fragment } from 'react'
-import { useSelector } from 'react-redux';
+import { Button, Grid, makeStyles, TextareaAutosize, Typography } from '@material-ui/core'
+import React, { Fragment, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import Logout from './Logout'
+import { endSession, sessionInfo } from './Redux/Action/Actions';
 let useStyles = makeStyles((themes) => ({
     addPadding: {
         padding: "70px"
@@ -19,15 +20,32 @@ let useStyles = makeStyles((themes) => ({
 export default function Dashboard() {
     let currentUser = JSON.parse(localStorage.getItem("currentUser"));
     let students = useSelector(state => state.students);
+    let sessionState = useSelector(state => state.sessionInfo);
     let history = useHistory();
+    let dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(sessionInfo("going"));
+        // eslint-disable-next-line
+    }, [])
+    useEffect(() => {
+        if (sessionState === "exited") history.push("/students");
+        // eslint-disable-next-line
+    }, [sessionState])
     if (!currentUser) history.push("/");
     let classes = useStyles();
+    console.log(students);
     return (
         <Fragment>
             <Grid container spacing={0} className={classes.addPadding}>
                 <Logout />
-                <Grid item xs={12}>
+                <Grid item xs={8}>
                     <Typography variant="h3">Dashboard</Typography>
+                </Grid>
+                <Grid item xs={2}>
+                    <Typography variant="subtitle1">{sessionState === "exiting" ? "Ending Session..." : sessionState !== "exited" && sessionState !== "going" ? `${sessionState}` : ""}</Typography>
+                </Grid>
+                <Grid item xs={2}>
+                    <Button variant="contained" onClick={() => dispatch(endSession(currentUser.email))}>End Session</Button>
                 </Grid>
                 <Grid item xs={12}>
                     <Typography variant="subtitle1">Student Link:http://localhost:300/#/123456789</Typography>
@@ -39,6 +57,6 @@ export default function Dashboard() {
                     </Grid>
                 })}
             </Grid>
-        </Fragment>
+        </Fragment >
     )
 }
