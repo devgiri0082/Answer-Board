@@ -51,7 +51,7 @@ export default function Dashboard() {
                         <Button variant="contained" onClick={() => dispatch(endSession(currentUser.email))}>End Session</Button>
                     </Grid>
                     <Grid item xs={12}>
-                        <Typography variant="subtitle1">Student Link:<Link to={`/room/${studentId}`}>http://localhost:300/room/{studentId}</Link></Typography>
+                        <Typography variant="subtitle1">Student Link:<Link to={`/room/${studentId}`}>https://practical-meitner-a9e959.netlify.app/room/{studentId}</Link></Typography>
                     </Grid>
                     {students.map((elem) => {
                         return <Grid item xs>
