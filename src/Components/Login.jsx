@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useState } from 'react'
 import { makeStyles } from "@material-ui/core/styles";
 import CssBaseline from '@material-ui/core/CssBaseline';
 // import Container from '@material-ui/core/Container';
@@ -38,6 +38,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 export default function Login() {
+    let [buttonDisabled, setButtonDisabled] = useState(false);
     let history = useHistory();
     let classes = useStyles();
     if (JSON.parse(localStorage.getItem("currentUser"))) history.push("/students");
@@ -48,7 +49,7 @@ export default function Login() {
                     <Typography variant="h3">Everyone answer</Typography>
                     <Typography variant="h6">Welcome, Please sign in.</Typography>
                     <Typography variant="h1"> <IoPersonCircle style={{ color: "rgb(224,225,225)" }} /></Typography>
-                    <GoogleButton onClick={signIn}>
+                    <GoogleButton style={{ "pointer-events": buttonDisabled && "none" }} onClick={signIn}>
                         <img src="https://www.transparentpng.com/thumb/google-logo/colorful-google-logo-transparent-clipart-download-u3DWLj.png" alt="colorful google logo" />
                         <div className="text">Sign in with google</div>
                     </GoogleButton>
@@ -58,10 +59,12 @@ export default function Login() {
     )
     async function signIn() {
         try {
+            setButtonDisabled(true);
             await firebase.auth()
                 .signInWithPopup(provider);
             console.log(firebase.auth().currentUser.email);
             localStorage.setItem("currentUser", JSON.stringify(firebase.auth().currentUser))
+            setButtonDisabled(false);
             history.push("/students")
         } catch (err) {
             console.log(err);

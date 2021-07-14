@@ -10,8 +10,9 @@ import firebase from "firebase";
 import { useHistory } from 'react-router-dom';
 import Logout from './Logout';
 import { useDispatch, useSelector } from 'react-redux';
-import { getStudents, loading, setStudents } from './Redux/Action/Actions';
+import { getStudents, loading, setStudents, studentLink } from './Redux/Action/Actions';
 import LinearProgress from "@material-ui/core/LinearProgress";
+import { v4 as uuidv4 } from "uuid";
 const useStyles = makeStyles((theme) => ({
     addPadding: {
         padding: "70px 0"
@@ -34,6 +35,8 @@ export default function Students() {
     let history = useHistory();
     let dispatch = useDispatch();
     let { loading: loadingState, error, students } = useSelector(state => state);
+    let state = useSelector(state => state);
+    console.log(state);
     // let state = useSelector(state => state);
     let namesRef = useRef();
     let [submitState, setSubmitState] = useState("notSubmitted");
@@ -117,10 +120,11 @@ export default function Students() {
         setSubmitState("submitting");
         names.sort();
         try {
-            await db.collection(firebase.auth().currentUser.email.split(".").join("_")).doc(firebase.auth().currentUser.email.split(".").join("_")).set({ students: names });
-            setSubmitState("submitted");
-            // console.log("success");
+            let studentId = uuidv4();
+            await db.collection(firebase.auth().currentUser.email.split(".").join("_")).doc(firebase.auth().currentUser.email.split(".").join("_")).set({ students: names, link: studentId });
             dispatch(setStudents(names));
+            await dispatch(studentLink(studentId, currentUser.email));
+            setSubmitState("submitted");
             history.push("/dashboard");
         } catch (err) {
             console.log(err);
