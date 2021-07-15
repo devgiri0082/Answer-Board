@@ -75,14 +75,12 @@ export const endSession = (email, studentId, students) => {
       let teacherId = email.split(".").join("_");
       console.log("deleting value");
       dispatch(sessionInfo("Ending Session..."));
-      for (let i = 0; i < students.length; i++) {
-        await db
-          .collection(teacherId)
-          .doc(teacherId)
-          .collection(students[i])
-          .doc(students[i])
-          .delete();
-      }
+      await db
+        .collection(teacherId)
+        .doc(teacherId)
+        .collection("studentsMessage")
+        .doc("studentsMessage")
+        .delete();
       await db.collection(teacherId).doc(teacherId).delete();
       await db.collection("studentId").doc(studentId).delete();
       dispatch(setStudents([]));

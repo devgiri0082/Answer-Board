@@ -85,7 +85,7 @@ export default function Dashboard() {
                     {students.map((elem) => {
                         return <Grid item xs>
                             <Typography valiant="subtitle1" color="primary">{elem}</Typography>
-                            <TextareaAutosize value={values[elem]} minRows={10} size="large" className={classes.textareaStyle}></TextareaAutosize>
+                            <TextareaAutosize value={values && values[elem]} minRows={10} size="large" className={classes.textareaStyle}></TextareaAutosize>
                         </Grid>
                     })}
                 </Grid>
