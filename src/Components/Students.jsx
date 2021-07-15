@@ -10,7 +10,7 @@ import firebase from "firebase";
 import { useHistory } from 'react-router-dom';
 import Logout from './Logout';
 import { useDispatch, useSelector } from 'react-redux';
-import { getStudents, loading, setStudents, studentLink } from './Redux/Action/Actions';
+import { createRoom, getStudents, loading, setStudents, studentLink } from './Redux/Action/Actions';
 import LinearProgress from "@material-ui/core/LinearProgress";
 import { v4 as uuidv4 } from "uuid";
 const useStyles = makeStyles((theme) => ({
@@ -119,11 +119,7 @@ export default function Students() {
         names.sort();
         try {
             let studentId = uuidv4();
-            await db.collection(firebase.auth().currentUser.email.split(".").join("_")).doc(firebase.auth().currentUser.email.split(".").join("_")).set({ students: names, link: studentId });
-            for (let i = 0; i < names.length; i++) {
-                await db.collection(firebase.auth().currentUser.email.split(".").join("_")).doc(firebase.auth().currentUser.email.split(".").join("_")).collection(names[i]).doc(names[i]).set({ description: "" });
-            }
-            dispatch(setStudents(names));
+            dispatch(createRoom(firebase.auth().currentUser.email, names, studentId));
             await dispatch(studentLink(studentId, currentUser.email));
             setSubmitState("submitted");
             history.push("/dashboard");

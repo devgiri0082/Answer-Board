@@ -124,12 +124,52 @@ export const findTeacher = (id) => {
 export const saveChanges = (teacher, student, text) => {
   return async (dispatch) => {
     try {
+      let updatingField = {};
+      updatingField[student] = text;
       await db
         .collection(teacher.split(".").join("_"))
         .doc(teacher.split(".").join("_"))
-        .collection(student)
-        .doc(student)
-        .set({ description: text });
+        .collection("studentsMessage")
+        .doc("studentsMessage")
+        .update(updatingField);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+};
+export const clearStudentsFields = (students, teacher) => {
+  return async (dispatch) => {
+    try {
+      let updatingFields = {};
+      students.forEach((elem) => (updatingFields[elem] = ""));
+      await db
+        .collection(teacher.split(".").join("_"))
+        .doc(teacher.split(".").join("_"))
+        .collection("studentsMessage")
+        .doc("studentsMessage")
+        .update(updatingFields);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+};
+
+export const createRoom = (email, students, studentId) => {
+  return async (dispatch) => {
+    try {
+      await db
+        .collection(email.split(".").join("_"))
+        .doc(email.split(".").join("_"))
+        .set({ students: students, link: studentId });
+      dispatch(setStudents(students));
+      let studentsObj = {};
+      students.forEach((elem) => (studentsObj[elem] = ""));
+      await db
+        .collection(email.split(".").join("_"))
+        .doc(email.split(".").join("_"))
+        .collection("studentsMessage")
+        .doc("studentsMessage")
+        .set(studentsObj);
     } catch (err) {
       console.log(err);
     }

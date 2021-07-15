@@ -28,19 +28,21 @@ export default function Answer() {
     let classes = useStyles();
     let dispatch = useDispatch();
     useEffect(() => {
+        console.log("useEffect")
         if (currentStudent === undefined) history.push(`/room/${id}`);
         else listenForChange();
         // eslint-disable-next-line
     }, [])
     async function listenForChange() {
-        console.log(state);
+        console.log("am I even here")
         await db
             .collection(teacher.split(".").join("_"))
             .doc(teacher.split(".").join("_"))
-            .collection(currentStudent)
-            .doc(currentStudent)
+            .collection("studentsMessage")
+            .doc("studentsMessage")
             .onSnapshot((doc) => {
-                let data = doc.data()?.description;
+                console.log(doc.data(), "data");
+                let data = doc.data()[currentStudent];
                 valueRef.current.value = data;
             })
     }

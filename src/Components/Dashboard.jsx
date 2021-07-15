@@ -3,7 +3,7 @@ import React, { Fragment, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import Logout from './Logout'
-import { endSession, saveChanges, sessionInfo } from './Redux/Action/Actions';
+import { clearStudentsFields, endSession, saveChanges, sessionInfo } from './Redux/Action/Actions';
 import { db } from './Redux/firebaseConfig';
 let useStyles = makeStyles((themes) => ({
     addPadding: {
@@ -43,32 +43,23 @@ export default function Dashboard() {
         // eslint-disable-next-line
     }, [students]);
     async function listenForChanges(settingValues) {
-        console.log(values);
-        // let currentValues = { ...values };
-        for (let i = 0; i < students.length; i++) {
-            await db
-                .collection(currentUser.email.split(".").join("_"))
-                .doc(currentUser.email.split(".").join("_"))
-                .collection(students[i])
-                .doc(students[i])
-                .onSnapshot((doc) => {
-                    let data = doc.data()?.description;
-                    let temp = {};
-                    temp[students[i]] = data;
-                    console.log(temp);
-                    setValues(temp);
-                })
-        }
+        await db
+            .collection(currentUser.email.split(".").join("_"))
+            .doc(currentUser.email.split(".").join("_"))
+            .collection("studentsMessage")
+            .doc("studentsMessage")
+            .onSnapshot((doc) => {
+                let data = doc.data();
+                console.log(data);
+                setValues(data);
+            })
     }
     if (!currentUser) history.push("/");
     let classes = useStyles();
     async function clearAnswers() {
         console.log("clearing the answer");
         dispatch(sessionInfo("Clearing answers..."));
-        for (let i = 0; i < students.length; i++) {
-            // console.log(teacherEmail);
-            await dispatch(saveChanges(currentUser.email, students[i], ""))
-        }
+        await dispatch(clearStudentsFields(students, currentUser.email))
         dispatch(sessionInfo(""));
     }
     if (students.length > 0) {
