@@ -3,7 +3,7 @@ import React, { Fragment, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import Logout from './Logout'
-import { endSession, sessionInfo } from './Redux/Action/Actions';
+import { endSession, saveChanges, sessionInfo } from './Redux/Action/Actions';
 import { db } from './Redux/firebaseConfig';
 let useStyles = makeStyles((themes) => ({
     addPadding: {
@@ -29,11 +29,11 @@ export default function Dashboard() {
     let dispatch = useDispatch();
     useEffect(() => {
         if (students.length === 0) history.push("/");
-        dispatch(sessionInfo("going"));
+        dispatch(sessionInfo(""));
         // eslint-disable-next-line
     }, []);
     useEffect(() => {
-        if (sessionState === "exited") history.push("/students");
+        if (sessionState === "ended") history.push("/students");
         // eslint-disable-next-line
     }, [sessionState]);
     useEffect(() => {
@@ -52,7 +52,7 @@ export default function Dashboard() {
                 .collection(students[i])
                 .doc(students[i])
                 .onSnapshot((doc) => {
-                    let data = doc.data().description;
+                    let data = doc.data()?.description;
                     let temp = {};
                     temp[students[i]] = data;
                     console.log(temp);
@@ -62,19 +62,31 @@ export default function Dashboard() {
     }
     if (!currentUser) history.push("/");
     let classes = useStyles();
+    async function clearAnswers() {
+        console.log("clearing the answer");
+        dispatch(sessionInfo("Clearing answers..."));
+        for (let i = 0; i < students.length; i++) {
+            // console.log(teacherEmail);
+            await dispatch(saveChanges(currentUser.email, students[i], ""))
+        }
+        dispatch(sessionInfo(""));
+    }
     if (students.length > 0) {
         return (
             <Fragment>
                 <Grid container spacing={0} className={classes.addPadding}>
                     <Logout />
-                    <Grid item xs={8}>
+                    <Grid item xs={3}>
                         <Typography variant="h3">Dashboard</Typography>
                     </Grid>
-                    <Grid item xs={2}>
-                        <Typography variant="subtitle1">{sessionState === "exiting" ? "Ending Session..." : sessionState !== "exited" && sessionState !== "going" ? `${sessionState}` : ""}</Typography>
+                    <Grid item xs={5}>
+                        <Button variant="contained" color="primary" onClick={clearAnswers}>Clear Answer</Button>
                     </Grid>
                     <Grid item xs={2}>
-                        <Button variant="contained" onClick={() => dispatch(endSession(currentUser.email, studentId))}>End Session</Button>
+                        <Typography variant="subtitle1">{sessionState}</Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                        <Button variant="contained" onClick={() => dispatch(endSession(currentUser.email, studentId, students))}>End Session</Button>
                     </Grid>
                     <Grid item xs={12}>
                         <Typography variant="subtitle1">Student Link:<Link to={`/room/${studentId}`}>https://practical-meitner-a9e959.netlify.app/room/{studentId}</Link></Typography>
@@ -91,4 +103,5 @@ export default function Dashboard() {
     } else {
         return (<div></div>)
     }
+
 }

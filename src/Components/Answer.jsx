@@ -1,8 +1,9 @@
 import { Container, Grid, makeStyles, TextareaAutosize, Typography } from '@material-ui/core'
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { saveChanges, syncing } from './Redux/Action/Actions';
+import { db } from './Redux/firebaseConfig';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -17,8 +18,10 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 export default function Answer() {
+    let valueRef = useRef();
     let history = useHistory();
     let { id } = useParams();
+    let state = useSelector(state => state);
     let currentStudent = useSelector(state => state.currentStudent);
     let syncingStatus = useSelector(state => state.syncingStatus);
     let teacher = useSelector(state => state.teacherEmail);
@@ -26,8 +29,21 @@ export default function Answer() {
     let dispatch = useDispatch();
     useEffect(() => {
         if (currentStudent === undefined) history.push(`/room/${id}`);
+        else listenForChange();
         // eslint-disable-next-line
     }, [])
+    async function listenForChange() {
+        console.log(state);
+        await db
+            .collection(teacher.split(".").join("_"))
+            .doc(teacher.split(".").join("_"))
+            .collection(currentStudent)
+            .doc(currentStudent)
+            .onSnapshot((doc) => {
+                let data = doc.data()?.description;
+                valueRef.current.value = data;
+            })
+    }
     if (currentStudent) {
         return (
             <Container maxWidth="md" p={4} className={classes.addPadding}>
@@ -42,7 +58,7 @@ export default function Answer() {
                         <Typography variant="subtitle1">Enter your answer below. This text is visible to the teacher.</Typography>
                     </Grid>
                     <Grid item xs={12}>
-                        <TextareaAutosize onChange={(e) => setChange(e.target.value)} aria-label="maximum height" minRows={13} size="large" className={classes.changeTextArea} style={{ width: "75%" }} />
+                        <TextareaAutosize ref={valueRef} onChange={(e) => setChange(e.target.value)} aria-label="maximum height" minRows={13} size="large" className={classes.changeTextArea} style={{ width: "75%" }} />
                     </Grid>
                     <Typography variant="subtitle1" color="primary">{syncingStatus}</Typography>
                 </Grid>

@@ -68,19 +68,26 @@ export const getStudents = (email) => {
   };
 };
 
-export const endSession = (email, studentId) => {
+export const endSession = (email, studentId, students) => {
   return async (dispatch) => {
     try {
+      console.log(email);
+      let teacherId = email.split(".").join("_");
       console.log("deleting value");
-      dispatch(sessionInfo("exiting"));
-      await db
-        .collection(email.split(".").join("_"))
-        .doc(email.split(".").join("_"))
-        .delete();
+      dispatch(sessionInfo("Ending Session..."));
+      for (let i = 0; i < students.length; i++) {
+        await db
+          .collection(teacherId)
+          .doc(teacherId)
+          .collection(students[i])
+          .doc(students[i])
+          .delete();
+      }
+      await db.collection(teacherId).doc(teacherId).delete();
       await db.collection("studentId").doc(studentId).delete();
       dispatch(setStudents([]));
       dispatch(error(""));
-      dispatch(sessionInfo("exited"));
+      dispatch(sessionInfo("ended"));
     } catch (err) {
       console.log(err);
       dispatch(error(err));
@@ -91,7 +98,7 @@ export const endSession = (email, studentId) => {
 export const studentLink = (id, email) => {
   return async (dispatch) => {
     try {
-      await db.collection("studentId").doc(id).set({ teacher: email });
+      await db.collection("studentId").doc(id)?.set({ teacher: email });
       dispatch(setStudentLink(id));
     } catch (err) {
       console.log(err);
