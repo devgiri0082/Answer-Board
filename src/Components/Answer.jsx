@@ -1,7 +1,8 @@
 import { Container, Grid, makeStyles, TextareaAutosize, Typography } from '@material-ui/core'
 import React, { useEffect } from 'react'
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
+import { saveChanges, syncing } from './Redux/Action/Actions';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -19,7 +20,10 @@ export default function Answer() {
     let history = useHistory();
     let { id } = useParams();
     let currentStudent = useSelector(state => state.currentStudent);
+    let syncingStatus = useSelector(state => state.syncingStatus);
+    let teacher = useSelector(state => state.teacherEmail);
     let classes = useStyles();
+    let dispatch = useDispatch();
     useEffect(() => {
         if (currentStudent === undefined) history.push(`/room/${id}`);
         // eslint-disable-next-line
@@ -38,8 +42,9 @@ export default function Answer() {
                         <Typography variant="subtitle1">Enter your answer below. This text is visible to the teacher.</Typography>
                     </Grid>
                     <Grid item xs={12}>
-                        <TextareaAutosize aria-label="maximum height" minRows={13} size="large" className={classes.changeTextArea} style={{ width: "75%" }} />
+                        <TextareaAutosize onChange={(e) => setChange(e.target.value)} aria-label="maximum height" minRows={13} size="large" className={classes.changeTextArea} style={{ width: "75%" }} />
                     </Grid>
+                    <Typography variant="subtitle1" color="primary">{syncingStatus}</Typography>
                 </Grid>
             </Container>
         )
@@ -48,5 +53,14 @@ export default function Answer() {
         return (
             <div>Invalid User</div>
         )
+    }
+    async function setChange(text) {
+        try {
+            dispatch(syncing("Syncing..."))
+            await dispatch(saveChanges(teacher, currentStudent, text));
+            dispatch(syncing("Sync Complete"));
+        } catch (err) {
+            console.log(err);
+        }
     }
 }

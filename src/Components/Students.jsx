@@ -120,6 +120,9 @@ export default function Students() {
         try {
             let studentId = uuidv4();
             await db.collection(firebase.auth().currentUser.email.split(".").join("_")).doc(firebase.auth().currentUser.email.split(".").join("_")).set({ students: names, link: studentId });
+            for (let i = 0; i < names.length; i++) {
+                await db.collection(firebase.auth().currentUser.email.split(".").join("_")).doc(firebase.auth().currentUser.email.split(".").join("_")).collection(names[i]).doc(names[i]).set({ description: "" });
+            }
             dispatch(setStudents(names));
             await dispatch(studentLink(studentId, currentUser.email));
             setSubmitState("submitted");

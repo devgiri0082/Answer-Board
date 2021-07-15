@@ -6,6 +6,7 @@ import {
   SET_TEACHER,
   STUDENTS,
   STUDENT_LINK,
+  SYNCING,
   USER_EXISTS,
 } from "../Action/ActionType";
 
@@ -18,6 +19,7 @@ let initialState = {
   teacherExist: undefined,
   teacherEmail: undefined,
   currentStudent: undefined,
+  syncingStatus: undefined,
 };
 
 export default function reducer(state = initialState, action) {
@@ -38,6 +40,8 @@ export default function reducer(state = initialState, action) {
       return { ...state, teacherEmail: action.payload };
     case CURRENT_STUDENT:
       return { ...state, currentStudent: action.payload };
+    case SYNCING:
+      return { ...state, syncingStatus: action.payload };
     default:
       return state;
   }

@@ -41,6 +41,7 @@ export default function Login() {
     let history = useHistory();
     let classes = useStyles();
     useEffect(() => {
+        //https://stackoverflow.com/questions/67946133/use-firebase-auth-setpersistencefirebase-auth-auth-persistence-local-however
         firebase.auth().onAuthStateChanged((user) => {
             if (user) {
                 if (user.emailVerified) {

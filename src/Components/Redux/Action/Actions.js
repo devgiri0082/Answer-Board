@@ -7,6 +7,7 @@ import {
   SET_TEACHER,
   STUDENTS,
   STUDENT_LINK,
+  SYNCING,
   USER_EXISTS,
 } from "./ActionType";
 
@@ -41,6 +42,10 @@ export let currentStudent = (value) => ({
   type: CURRENT_STUDENT,
   payload: value,
 });
+export let syncing = (value) => ({
+  type: SYNCING,
+  payload: value,
+});
 export const getStudents = (email) => {
   return async (dispatch) => {
     console.log("I am here");
@@ -49,10 +54,10 @@ export const getStudents = (email) => {
         .collection(email.split(".").join("_"))
         .doc(email.split(".").join("_"))
         .get();
-      //console.log(response);
+      console.log(response);
       if (!response.exists) return;
       let data = await response.data();
-      // console.log(data);
+      console.log(data);
       await dispatch(setStudents(data.students));
       dispatch(setStudentLink(data.link));
       // dispatch(loading());
@@ -63,7 +68,7 @@ export const getStudents = (email) => {
   };
 };
 
-export const endSession = (email) => {
+export const endSession = (email, studentId) => {
   return async (dispatch) => {
     try {
       console.log("deleting value");
@@ -72,6 +77,7 @@ export const endSession = (email) => {
         .collection(email.split(".").join("_"))
         .doc(email.split(".").join("_"))
         .delete();
+      await db.collection("studentId").doc(studentId).delete();
       dispatch(setStudents([]));
       dispatch(error(""));
       dispatch(sessionInfo("exited"));
@@ -102,6 +108,21 @@ export const findTeacher = (id) => {
       let data = await response.data();
       dispatch(userExists(true));
       dispatch(setTeacher(data.teacher));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+};
+
+export const saveChanges = (teacher, student, text) => {
+  return async (dispatch) => {
+    try {
+      await db
+        .collection(teacher.split(".").join("_"))
+        .doc(teacher.split(".").join("_"))
+        .collection(student)
+        .doc(student)
+        .set({ description: text });
     } catch (err) {
       console.log(err);
     }
