@@ -3,7 +3,7 @@ import React, { Fragment, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import Logout from './Logout'
-import { clearStudentsFields, endSession, saveChanges, sessionInfo } from './Redux/Action/Actions';
+import { clearStudentsFields, endSession, sessionInfo } from './Redux/Action/Actions';
 import { db } from './Redux/firebaseConfig';
 let useStyles = makeStyles((themes) => ({
     addPadding: {

@@ -21,7 +21,6 @@ export default function Answer() {
     let valueRef = useRef();
     let history = useHistory();
     let { id } = useParams();
-    let state = useSelector(state => state);
     let currentStudent = useSelector(state => state.currentStudent);
     let syncingStatus = useSelector(state => state.syncingStatus);
     let teacher = useSelector(state => state.teacherEmail);
