@@ -6,7 +6,7 @@ import { currentStudent, findTeacher, getStudents } from "./Redux/Action/Actions
 
 const useStyles = makeStyles((theme) => ({
     addPadding: {
-        padding: "70px 0"
+        padding: "70px  30px"
     },
     nativeSelectStyle: {
         width: "300px",
