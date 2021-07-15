@@ -5,7 +5,6 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import { IoPersonCircle } from "react-icons/io5";
-import { provider } from './Redux/firebaseConfig';
 import firebase from "firebase";
 import { useHistory } from 'react-router-dom';
 import styled from "styled-components";
@@ -51,6 +50,7 @@ export default function Login() {
                 }
             }
         });
+        // eslint-disable-next-line
     }, [])
     if (JSON.parse(localStorage.getItem("currentUser"))) history.push("/students");
     return (
