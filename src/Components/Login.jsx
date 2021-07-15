@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import { makeStyles } from "@material-ui/core/styles";
 import CssBaseline from '@material-ui/core/CssBaseline';
 // import Container from '@material-ui/core/Container';
@@ -41,6 +41,17 @@ export default function Login() {
     let [buttonDisabled, setButtonDisabled] = useState(false);
     let history = useHistory();
     let classes = useStyles();
+    useEffect(() => {
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                if (user.emailVerified) {
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    // Dispatch the success action
+                    history.push("/students")// update state. isAuthenticated=true, user=currentUser
+                }
+            }
+        });
+    }, [])
     if (JSON.parse(localStorage.getItem("currentUser"))) history.push("/students");
     return (
         <Fragment>
@@ -60,12 +71,13 @@ export default function Login() {
     async function signIn() {
         try {
             setButtonDisabled(true);
-            await firebase.auth()
-                .signInWithPopup(provider);
+            await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
+            var provider = new firebase.auth.GoogleAuthProvider();
+            await firebase.auth().signInWithPopup(provider);
             console.log(firebase.auth().currentUser.email);
-            localStorage.setItem("currentUser", JSON.stringify(firebase.auth().currentUser))
+            // localStorage.setItem("currentUser", JSON.stringify(firebase.auth().currentUser))
             setButtonDisabled(false);
-            history.push("/students")
+            // history.push("/students")
         } catch (err) {
             console.log(err);
         }

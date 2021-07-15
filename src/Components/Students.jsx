@@ -35,8 +35,6 @@ export default function Students() {
     let history = useHistory();
     let dispatch = useDispatch();
     let { loading: loadingState, error, students } = useSelector(state => state);
-    let state = useSelector(state => state);
-    console.log(state);
     // let state = useSelector(state => state);
     let namesRef = useRef();
     let [submitState, setSubmitState] = useState("notSubmitted");
